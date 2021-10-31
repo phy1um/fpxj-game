@@ -11,6 +11,10 @@ get-engine:
 run: scripts assets
 	cd engine && make run	
 
+.PHONY: runlove
+runlove: scripts assets
+	cd engine && love .
+
 .PHONY: docker-elf
 docker-elf:
 	make -C engine assets
@@ -31,7 +35,12 @@ resetps2:
 .PHONY: scripts
 scripts:
 	cp -r script/* engine/script/
+	cp main.lua engine/
 
 .PHONY: assets
 assets:
 	cp -r asset/* engine/asset/
+
+.PHONY: lualint
+lualint:
+	luac5.1 -p script/*.lua
