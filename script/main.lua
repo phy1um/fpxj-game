@@ -41,7 +41,7 @@ end
 local D2D = require("draw2d")
 local VRAM = require("vram")
 local T = require("text")
-local mainmenu = require("mainmenu")
+local menu = require("menu")
 
 local state = nil
 local buttons = {PAD.X, PAD.LEFT, PAD.RIGHT, PAD.UP, PAD.DOWN}
@@ -69,11 +69,12 @@ function PS2PROG.start()
   for _, b in ipairs(buttons) do
     buttonState[b] = false  
   end
-  state = mainmenu.new()
-  state:addEntry("Foo1", function() print("foo1") end)
-  state:addEntry("Foo2", function() print("foo2") end)
-  state:addEntry("Foo3", function() print("foo3") end)
-  state:addEntry("Foo4", function() print("foo4") end)
+  local mainmenu = menu.new()
+  mainmenu:addEntry("Foo1", function() print("foo1") end)
+  mainmenu:addEntry("Foo2", function() print("foo2") end)
+  mainmenu:addEntry("Foo3", function() print("foo3") end)
+  mainmenu:addEntry("Foo4", function() print("foo4") end)
+  state = mainmenu
 end
 
 local dt = 1/60
