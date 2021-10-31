@@ -20,7 +20,6 @@ if love ~= nil then
   local fennel = require("script/fennel")
   require = function(p, ...)
     if p == "draw2d" then p = "script/lovedraw"
-    elseif p == "text" then p = "script/lovedraw"
     else p = "script/" .. p
     end
     return coreRequire(p, ...)
