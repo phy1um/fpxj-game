@@ -12,6 +12,7 @@ local draw = {
     kc = 0,
     rawtri = 0,
   },
+  clear = {r=0, g=0, b=0}
 }
 
 function draw:newBuffer()
@@ -92,10 +93,18 @@ function draw.printLines(x, y, ...)
   end
 end
 
-function draw.clearColour(r, g, b)
+function draw:clearColour(r, g, b)
+  draw.clear.r = (r/0xff)
+  draw.clear.g = (g/0xff)
+  draw.clear.b = (b/0xff)
+  draw.clear.a = 1.0
+  print("set clear colour: ", draw.clear.r, draw.clear.g, draw.clear.b)
 end
 
-function draw.frameStart() end
+function draw.frameStart() 
+  love.graphics.clear(draw.clear.r, draw.clear.g, draw.clear.b)
+end
+
 function draw.frameEnd() end
 
 

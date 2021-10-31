@@ -27,8 +27,7 @@ if love ~= nil then
   table.unpack = unpack
   print("loading love2d main")
   print("inserting fennel searchers")
-  table.insert(package.loaders or package.searchers, fennel.make_searcher{correlate=true})
-  fennel.dofile("script/lovemain.fnl")
+  dofile("script/lovemain.lua")
 else
   require = function(p, ...)
     print("REQ+" .. p)
@@ -42,6 +41,8 @@ local D2D = require("draw2d")
 local VRAM = require("vram")
 local T = require("text")
 local menu = require("menu")
+local game = require("game")
+local room = require("room")
 
 local state = nil
 local buttons = {PAD.X, PAD.LEFT, PAD.RIGHT, PAD.UP, PAD.DOWN}
@@ -57,6 +58,42 @@ function updatePadInputs(s)
   end
 end
 
+function testEntity(cx, cy)
+  return {
+    cx = cx,
+    cy = cy,
+    r = 100,
+    x = cx+100,
+    y = cy,
+    etype = "player",
+    ct = 0,
+    update = function(self, dt)
+      self.x = self.cx + math.cos(self.ct)*self.r
+      self.y = self.cy + math.sin(self.ct)*self.r
+      self.ct = self.ct + dt
+    end,
+    draw = function(self)
+      D2D:setColour(255, 0, 0, 0x80)
+      D2D:rect(self.x, self.y, 20, 20)
+      D2D:rect(self.cx, self.cy, 2, 2)
+    end
+  }
+end
+
+function startGame()
+  print("starting game state")
+  local r1 = room.new(0, 0)
+  local r2 = room.new(640, 0)
+  local g = game.new()
+  g:addRoom(r1)
+  g:addRoom(r2)
+  g.activeRoom = r1
+  r1:set(3, 3, 1)
+  r1:set(4, 4, 1)
+  g:spawn(testEntity(320, 224))
+  state = g
+end
+
 function PS2PROG.start()
   T.font = D2D.loadTexture("host:bigfont.tga", 256, 64)
   DMA.init(DMA.GIF)
@@ -70,7 +107,7 @@ function PS2PROG.start()
     buttonState[b] = false  
   end
   local mainmenu = menu.new()
-  mainmenu:addEntry("Foo1", function() print("foo1") end)
+  mainmenu:addEntry("New Game", startGame)
   mainmenu:addEntry("Foo2", function() print("foo2") end)
   mainmenu:addEntry("Foo3", function() print("foo3") end)
   mainmenu:addEntry("Foo4", function() print("foo4") end)
@@ -84,7 +121,7 @@ function PS2PROG.frame()
   D2D:frameStart()
   state:draw()
   D2D:setColour(255, 255, 255, 0x80)
-  T.printLines(10, 10, "FPS: 0")
+  T.printLines(10, 10, "FPS: " .. (FPS or 0))
   D2D:frameEnd()
 end
 
