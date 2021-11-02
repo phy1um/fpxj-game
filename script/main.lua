@@ -43,6 +43,8 @@ local T = require("text")
 local menu = require("menu")
 local game = require("game")
 local room = require("room")
+local entity = require("entity")
+local player = require("player")
 
 local state = nil
 local buttons = {PAD.X, PAD.LEFT, PAD.RIGHT, PAD.UP, PAD.DOWN}
@@ -72,16 +74,17 @@ function testEntity(cx, cy)
       self.y = self.cy + math.sin(self.ct)*self.r
       self.ct = self.ct + dt
     end,
-    draw = function(self)
+    draw = function(self, cam)
       D2D:setColour(255, 0, 0, 0x80)
-      D2D:rect(self.x, self.y, 20, 20)
-      D2D:rect(self.cx, self.cy, 2, 2)
+      D2D:rect(self.x - cam.x, self.y - cam.y, 20, 20)
+      D2D:rect(self.cx - cam.x, self.cy - cam.y, 2, 2)
     end
   }
 end
 
 function startGame()
   print("starting game state")
+  entity:defineClass("player", player)
   local r1 = room.new(0, 0)
   local r2 = room.new(640, 0)
   local g = game.new()
@@ -91,6 +94,7 @@ function startGame()
   r1:set(3, 3, 1)
   r1:set(4, 4, 1)
   g:spawn(testEntity(320, 224))
+  g:spawn(entity:instance("player", {x = 100, y = 100}))
   state = g
 end
 

@@ -6,6 +6,7 @@ local H = 448
 local GRID = 16
 local GW = math.floor(W/GRID)
 local GH = math.floor(H/GRID)
+local gri = 0
 
 
 local room = {
@@ -32,10 +33,13 @@ end
 
 function constructor(x, y)
   local rr = setmetatable({}, {__index = room})
+  rr.id = gri
+  gri = gri + 1
   rr.offsetX = x
   rr.offsetY = y
   rr.boundX = x + W
   rr.boundY = y + H
+  rr.tiles = {}
   for i=0,GW,1 do
     for j=0,GH,1 do
       rr:set(i, j, 0)
