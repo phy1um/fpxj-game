@@ -1,28 +1,57 @@
 
 local D2D = require("draw2d")
+local V = require("vector")
 
 local player = {
   w = 20, h = 20,
+  vx = 0, vy = 0,
   etype = "player",
-  walk = 146.2
+  walk = 146.2,
+  walkAccel = 800,
+  friction = 200,
 }
 
+function clampf(v, min, max)
+  if v <= min then return min
+  elseif v >= max then return max
+  else return v end
+end
+
+function move_to_zero(v, d)
+  if v > 0 then
+    return math.max(0, v-d)
+  elseif v < 0 then
+    return math.min(0, v+d)
+  else return 0
+  end
+end
+
 function player:update(dt, st) 
-  local dx = 0
-  local dy = 0
+  local impulse = V.vec2(0,0)
   for _, ev in pairs(st.events) do
     if ev.key == PAD.LEFT then
-      dx = dx - self.walk
+      impulse.x = -1
     elseif ev.key == PAD.RIGHT then
-      dx = dx + self.walk
+      impulse.x = impulse.x + 1
     elseif ev.key == PAD.UP then
-      dy = dy - self.walk
+      impulse.y = -1
     elseif ev.key == PAD.DOWN then
-      dy = dy + self.walk
+      impulse.y = impulse.y + 1
     end
   end
-  self.x = self.x + dx*dt
-  self.y = self.y + dy*dt
+
+  local moveLen = impulse:length()
+  if moveLen > 0 then
+    local move = impulse:scale(self.walk/moveLen)
+    self.vx = move.x
+    self.vy = move.y
+  else
+    self.vx = move_to_zero(self.vx, self.friction*dt)
+    self.vy = move_to_zero(self.vy, self.friction*dt)
+  end
+
+  self.x = self.x + self.vx*dt
+  self.y = self.y + self.vy*dt
 end
 
 function player:draw(cam)
