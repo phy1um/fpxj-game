@@ -45,6 +45,7 @@ local game = require("game")
 local room = require("room")
 local entity = require("entity")
 local player = require("player")
+local player_bullet = require("player_bullet")
 
 local state = nil
 local buttons = {PAD.X, PAD.LEFT, PAD.RIGHT, PAD.UP, PAD.DOWN}
@@ -85,6 +86,7 @@ end
 function startGame()
   print("starting game state")
   entity:defineClass("player", player)
+  entity:defineClass("player_bullet", player_bullet)
   local r1 = room.new(0, 0)
   local r2 = room.new(640, 0)
   local g = game.new()

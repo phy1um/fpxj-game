@@ -26,14 +26,27 @@ end
 
 function game:update(dt)
   local cs = {}
+  local dlist = {}
   local focus = nil
-  for _, e in ipairs(self.elist) do
+
+  for i, e in ipairs(self.elist) do
     e:update(dt, self)
     if e.collides then
       table.insert(cs, e.collider)
     end
     if e.etype == self.focusType then focus = e end
+    if e.remove == true then
+      table.insert(dlist, i)
+    end
   end
+
+  for i=1,#dlist,1 do
+    local di = dlist[#dlist - i]
+    -- i am suspicious of this code
+    -- print("remove ", i, di)
+    table.remove(self.elist, di)
+  end
+  
   for _, e in ipairs(self.elist) do
     for _, c in ipairs(cs) do
       c(e)

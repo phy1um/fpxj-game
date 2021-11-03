@@ -1,5 +1,6 @@
 
 local D2D = require("draw2d")
+local entity = require("entity")
 local V = require("vector")
 
 local player = {
@@ -9,6 +10,8 @@ local player = {
   walk = 146.2,
   walkAccel = 800,
   friction = 200,
+  action_debounce = 0,
+  dir = DIR_DOWN,
 }
 
 function clampf(v, min, max)
@@ -28,15 +31,28 @@ end
 
 function player:update(dt, st) 
   local impulse = V.vec2(0,0)
+  local do_action = false
+  if self.action_debounce > 0 then
+    self.action_debounce = self.action_debounce - dt
+  end
   for _, ev in pairs(st.events) do
     if ev.key == PAD.LEFT then
       impulse.x = -1
+      self.dir = PAD.LEFT
     elseif ev.key == PAD.RIGHT then
       impulse.x = impulse.x + 1
+      self.dir = PAD.RIGHT
     elseif ev.key == PAD.UP then
       impulse.y = -1
+      self.dir = PAD.UP
     elseif ev.key == PAD.DOWN then
       impulse.y = impulse.y + 1
+      self.dir = PAD.DOWN
+    elseif ev.key == PAD.X then
+      if self.action_debounce <= 0 then
+        do_action = true
+        self.action_debounce = 0.09
+      end
     end
   end
 
@@ -48,6 +64,28 @@ function player:update(dt, st)
   else
     self.vx = move_to_zero(self.vx, self.friction*dt)
     self.vy = move_to_zero(self.vy, self.friction*dt)
+  end
+
+  if do_action then
+    local proj = entity:instance("player_bullet")
+    if self.dir == PAD.LEFT then
+      proj.x = self.x - 4
+      proj.y = self.y + (self.h/2)
+      proj.vx = -400
+    elseif self.dir == PAD.RIGHT then
+      proj.x = self.x + self.w + 4
+      proj.y = self.y + (self.h/2)
+      proj.vx = 400
+    elseif self.dir == PAD.UP then
+      proj.y = self.y - 4
+      proj.x = self.x + (self.w/2)
+      proj.vy = -400
+    elseif self.dir == PAD.DOWN then
+      proj.y = self.y + self.h + 4
+      proj.x = self.x + (self.w/2)
+      proj.vy = 400
+    end
+    st:spawn(proj)
   end
 
   self.x = self.x + self.vx*dt
