@@ -9,7 +9,7 @@ local player = {
   etype = "player",
   walk = 146.2,
   walkAccel = 800,
-  friction = 200,
+  friction = 800,
   action_debounce = 0,
   dir = DIR_DOWN,
 }
