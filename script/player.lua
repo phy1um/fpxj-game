@@ -29,6 +29,16 @@ function move_to_zero(v, d)
   end
 end
 
+function accel_to(v, accel, limit)
+  if limit > 0 then
+    return math.min(limit, v + accel)
+  elseif limit < 0 then
+    return math.max(limit, v - accel)
+  else
+    return move_to_zero(v, accel)
+  end
+end
+
 function player:update(dt, st) 
   local impulse = V.vec2(0,0)
   local do_action = false
@@ -58,12 +68,12 @@ function player:update(dt, st)
 
   local moveLen = impulse:length()
   if moveLen > 0 then
-    local move = impulse:scale(self.walk/moveLen)
-    self.vx = move.x
-    self.vy = move.y
+    local move = impulse:scale(self.walk)
+    self.vx = accel_to(self.vx, 90, move.x)
+    self.vy = accel_to(self.vy, 90, move.y)
   else
-    self.vx = move_to_zero(self.vx, self.friction*dt)
-    self.vy = move_to_zero(self.vy, self.friction*dt)
+    self.vx = move_to_zero(self.vx, 90)
+    self.vy = move_to_zero(self.vy, 90)
   end
 
   if do_action then
