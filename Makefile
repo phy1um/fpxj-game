@@ -40,6 +40,7 @@ scripts:
 .PHONY: assets
 assets:
 	cp -r asset/* engine/asset/
+	make -C engine assets
 
 .PHONY: lualint
 lualint:

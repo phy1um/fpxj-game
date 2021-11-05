@@ -46,6 +46,7 @@ local room = require("room")
 local entity = require("entity")
 local player = require("player")
 local player_bullet = require("player_bullet")
+local resources = require("resource")
 
 local state = nil
 local buttons = {PAD.X, PAD.LEFT, PAD.RIGHT, PAD.UP, PAD.DOWN}
@@ -93,15 +94,21 @@ function startGame()
   g:addRoom(r1)
   g:addRoom(r2)
   g.activeRoom = r1
-  r1:set(3, 3, 1)
-  r1:set(4, 4, 1)
+  for i=1,10,1 do
+    for j=1,10,1 do
+      local vv = math.floor(rnd()*24) + 1
+      r1:set(i, j, vv)
+    end
+  end
   g:spawn(testEntity(320, 224))
   g:spawn(entity:instance("player", {x = 100, y = 100}))
   state = g
 end
 
 function PS2PROG.start()
+  math.randomseed(123)
   T.font = D2D.loadTexture("host:bigfont.tga", 256, 64)
+  resources:loadTextures()
   DMA.init(DMA.GIF)
   GS.setOutput(640, 448, GS.NONINTERLACED, GS.NTSC)
   local fb1 = VRAM.buffer(640, 448, GS.PSM24, 256)
