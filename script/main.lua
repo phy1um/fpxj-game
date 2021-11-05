@@ -94,8 +94,8 @@ function startGame()
   g:addRoom(r1)
   g:addRoom(r2)
   g.activeRoom = r1
-  for i=1,10,1 do
-    for j=1,10,1 do
+  for i=1,3,1 do
+    for j=1,3,1 do
       local vv = math.floor(rnd()*24) + 1
       r1:set(i, j, vv)
     end

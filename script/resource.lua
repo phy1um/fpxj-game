@@ -16,11 +16,36 @@ function res.toUV(x, y, w, h, iw, ih)
   }
 end
 
+function uv(x, y)
+  print("add player frame", x, y)
+  return res.toUV(x, y, 16, 16, 256, 64)
+end
+
 res.playerFrames = {
-  down = {},
-  left = {},
-  right = {},
-  up = {},
+  down = {
+    uv(0, 0),
+    uv(0, 16),
+    uv(0, 0),
+    uv(0, 32),
+  },
+  up = {
+    uv(16, 0),
+    uv(16, 16),
+    uv(16, 0),
+    uv(16, 32),
+  },
+  right = {
+    uv(32, 0),
+    uv(32, 16),
+    uv(32, 0),
+    uv(32, 32),
+  },
+  left = {
+    uv(48, 0),
+    uv(48, 16),
+    uv(48, 0),
+    uv(48, 32),
+  },
 }
 
 res.tileUVs = {}

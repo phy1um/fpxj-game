@@ -2,6 +2,7 @@
 local D2D = require("draw2d")
 local entity = require("entity")
 local V = require("vector")
+local R = require("resource")
 
 local player = {
   w = 20, h = 20,
@@ -12,7 +13,11 @@ local player = {
   friction = 800,
   action_debounce = 0,
   dir = DIR_DOWN,
+  frame = R.playerFrames.left[1],
+  animTimer = 0,
 }
+
+local animTimerMax = 1.2
 
 function clampf(v, min, max)
   if v <= min then return min
@@ -49,15 +54,19 @@ function player:update(dt, st)
     if ev.key == PAD.LEFT then
       impulse.x = -1
       self.dir = PAD.LEFT
+      self.frame = R.playerFrames.left[1]
     elseif ev.key == PAD.RIGHT then
       impulse.x = impulse.x + 1
       self.dir = PAD.RIGHT
+      self.frame = R.playerFrames.right[1]
     elseif ev.key == PAD.UP then
       impulse.y = -1
       self.dir = PAD.UP
+      self.frame = R.playerFrames.up[1]
     elseif ev.key == PAD.DOWN then
       impulse.y = impulse.y + 1
       self.dir = PAD.DOWN
+      self.frame = R.playerFrames.down[1]
     elseif ev.key == PAD.X then
       if self.action_debounce <= 0 then
         do_action = true
@@ -71,10 +80,26 @@ function player:update(dt, st)
     local move = impulse:scale(self.walk)
     self.vx = accel_to(self.vx, 90, move.x)
     self.vy = accel_to(self.vy, 90, move.y)
+    self.animTimer = self.animTimer + dt
   else
     self.vx = move_to_zero(self.vx, 90)
     self.vy = move_to_zero(self.vy, 90)
+    self.animTimer = 0
   end
+
+  local animFrame = 4 * (self.animTimer % animTimerMax)/animTimerMax
+  -- local animFrame = 0
+  local animDir = nil
+  if self.dir == PAD.LEFT then
+    animDir = R.playerFrames.left
+  elseif self.dir == PAD.RIGHT then
+    animDir = R.playerFrames.right
+  elseif self.dir == PAD.UP then
+    animDir = R.playerFrames.up
+  else
+    animDir = R.playerFrames.down
+  end
+  self.frame = animDir[math.floor(animFrame) + 1]
 
   if do_action then
     local proj = entity:instance("player_bullet")
@@ -103,8 +128,11 @@ function player:update(dt, st)
 end
 
 function player:draw(cam)
-  D2D:setColour(0x90, 0x0a, 0x55, 0x80)
-  D2D:rect(self.x - cam.x, self.y - cam.y, self.w, self.h)
+  D2D:setColour(0x80, 0x80, 0x90, 0x80)
+  -- D2D:rect(self.x - cam.x, self.y - cam.y, self.w, self.h)
+  D2D:sprite(R.char, self.x - cam.x, self.y - cam.y,
+    self.w, self.h, self.frame.u1, self.frame.v1, self.frame.u2,
+    self.frame.v2)
 end
 
 return player
