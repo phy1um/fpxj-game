@@ -45,6 +45,7 @@ local game = require("game")
 local room = require("room")
 local entity = require("entity")
 local player = require("player")
+local bat = require("bat")
 local player_bullet = require("player_bullet")
 local resources = require("resource")
 
@@ -87,6 +88,7 @@ end
 function startGame()
   print("starting game state")
   entity:defineClass("player", player)
+  entity:defineClass("bat", bat)
   entity:defineClass("player_bullet", player_bullet)
   local r1 = room.new(0, 0)
   local r2 = room.new(640, 0)
@@ -100,8 +102,8 @@ function startGame()
       r1:set(i, j, vv)
     end
   end
-  g:spawn(testEntity(320, 224))
   g:spawn(entity:instance("player", {x = 100, y = 100}))
+  g:spawn(entity:instance("bat", {x = 400, y = 400}))
   state = g
 end
 

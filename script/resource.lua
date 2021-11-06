@@ -17,7 +17,6 @@ function res.toUV(x, y, w, h, iw, ih)
 end
 
 function uv(x, y)
-  print("add player frame", x, y)
   return res.toUV(x, y, 16, 16, 256, 64)
 end
 
@@ -46,6 +45,15 @@ res.playerFrames = {
     uv(48, 0),
     uv(48, 32),
   },
+}
+
+function uv(x, y)
+  return res.toUV(x, y, 28, 14, 256, 64)
+end
+
+res.batFrames = {
+  uv(64, 24),
+  uv(92, 24),
 }
 
 res.tileUVs = {}
