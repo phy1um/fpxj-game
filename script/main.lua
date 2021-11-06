@@ -12,7 +12,13 @@ end
 -- ps2 outdated lua compat... :(
 local rnd = math.random
 function math.random(from, to)
-  return from + (to * rnd())
+  if from == nil then
+    return rnd()
+  elseif to == nil then
+    return from*rnd()
+  else
+    return from + (to * rnd())
+  end
 end
 
 print("go go go")

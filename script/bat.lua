@@ -17,6 +17,11 @@ local bat = {
   health = 3,
   frame = R.batFrames[1],
   tgt = nil,
+  strafeTime = 0.9,
+  seekTime = 2.8,
+  strafeAngle = 0.01,
+  strafeDir = 1,
+  animTimer = 0,
 }
 
 function bat:moveAimless(speed)
@@ -32,9 +37,10 @@ function bat:moveSeek(v)
 end
 
 function bat:moveStrafe(v)
-  local d = V.vec2(self.tgt.x - self.x, self.tgt.y - self.y)
-  local arcx = self.tgt.x + (d.x * math.cos(0.01)) - (d.y * math.sin(0.01))
-  local arcy = self.tgt.y + (d.x * math.sin(0.01)) - (d.y * math.cos(0.01))
+  local d = V.vec2(self.x - self.tgt.x, self.y - self.tgt.y)
+  local r = self.strafeAngle * self.strafeDir
+  local arcx = self.tgt.x + (d.x * math.cos(r)) - (d.y * math.sin(r))
+  local arcy = self.tgt.y + (d.x * math.sin(r)) + (d.y * math.cos(r))
   local move = V.vec2(arcx - self.x, arcy - self.y)
   move:normalize()
   move:scale(v)
@@ -69,9 +75,26 @@ function bat:update(dt, st)
   self.stateTimer = self.stateTimer - dt
   if self.stateTimer <= 0 then
     self.state = (self.state + 1) % 2
-    self.stateTimer = 5
-    print("BAT->", self.state)
+    if self.state == SEEK then
+      self.stateTimer = self.seekTime
+    else
+      self.stateTimer = self.strafeTime
+      if math.random() > 0.5 then
+        self.strafeDir = 1
+      else
+        self.strafeDir = -1
+      end
+    end
   end
+
+  self.animTimer = self.animTimer + dt
+  if self.animTimer > 0.6 and self.animTimer < 1.2 then
+    self.frame = R.batFrames[2]
+  elseif self.animTimer > 1.2 then
+    self.frame = R.batFrames[1]
+    self.animTimer = 0
+  end
+
 end
 
 function bat:draw(cam)
