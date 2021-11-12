@@ -23,7 +23,6 @@ end
 
 print("go go go")
 if love ~= nil then
-  local fennel = require("script/fennel")
   require = function(p, ...)
     if p == "draw2d" then p = "script/lovedraw"
     else p = "script/" .. p
@@ -32,7 +31,6 @@ if love ~= nil then
   end
   table.unpack = unpack
   print("loading love2d main")
-  print("inserting fennel searchers")
   dofile("script/lovemain.lua")
 else
   require = function(p, ...)
