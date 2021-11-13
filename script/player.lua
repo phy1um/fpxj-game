@@ -15,6 +15,7 @@ local player = {
   dir = DIR_DOWN,
   frame = R.playerFrames.left[1],
   animTimer = 0,
+  isFire = false,
 }
 
 local animTimerMax = 1.2
@@ -50,28 +51,33 @@ function player:update(dt, st)
   if self.action_debounce > 0 then
     self.action_debounce = self.action_debounce - dt
   end
-  for _, ev in pairs(st.events) do
-    if ev.key == PAD.LEFT then
-      impulse.x = -1
-      self.dir = PAD.LEFT
-      self.frame = R.playerFrames.left[1]
-    elseif ev.key == PAD.RIGHT then
-      impulse.x = impulse.x + 1
-      self.dir = PAD.RIGHT
-      self.frame = R.playerFrames.right[1]
-    elseif ev.key == PAD.UP then
-      impulse.y = -1
-      self.dir = PAD.UP
-      self.frame = R.playerFrames.up[1]
-    elseif ev.key == PAD.DOWN then
-      impulse.y = impulse.y + 1
-      self.dir = PAD.DOWN
-      self.frame = R.playerFrames.down[1]
-    elseif ev.key == PAD.X then
-      if self.action_debounce <= 0 then
-        do_action = true
-        self.action_debounce = 0.09
+  for k, b in pairs(st.eventHeld) do
+    if b then
+      if k == PAD.LEFT then
+        impulse.x = -1
+        self.dir = PAD.LEFT
+        self.frame = R.playerFrames.left[1]
+      elseif k == PAD.RIGHT then
+        impulse.x = impulse.x + 1
+        self.dir = PAD.RIGHT
+        self.frame = R.playerFrames.right[1]
+      elseif k == PAD.UP then
+        impulse.y = -1
+        self.dir = PAD.UP
+        self.frame = R.playerFrames.up[1]
+      elseif k == PAD.DOWN then
+        impulse.y = impulse.y + 1
+        self.dir = PAD.DOWN
+        self.frame = R.playerFrames.down[1]
       end
+    end
+  end
+
+  if st.eventPress[PAD.X] then
+    print("X")
+    if self.action_debounce <= 0 then
+      do_action = true
+      self.action_debounce = 0.09
     end
   end
 

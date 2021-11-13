@@ -6,8 +6,10 @@ local game = {
   elist = {},
   camera = {x=0, y=0},
   activeRoom = nil,
-  focusType = "player",
-  events = {},
+ focusType = "player",
+  eventHeld = {},
+  eventPress = {},
+  eventRelease = {},
 }
 
 function game:focusCamera(f)
@@ -58,6 +60,14 @@ function game:update(dt)
       self:focusCamera(focus)
     end
   end
+
+  for i, _ in pairs(self.eventPress) do
+    self.eventPress[i] = false
+  end
+  for i, _ in pairs(self.eventRelease) do
+    self.eventRelease[i] = false
+  end
+
 end
 
 function game:draw()
@@ -78,9 +88,13 @@ end
 
 function game:inputEvent(k, s) 
   if s == true then
-    self.events[k] = {key = k}
+    print("hold " .. k)
+    self.eventHeld[k] = true
+    self.eventPress[k] = true
   else
-    self.events[k] = nil
+    print("release " .. k)
+    self.eventHeld[k] = false
+    self.eventRelease[k] = true
   end
 end
 
