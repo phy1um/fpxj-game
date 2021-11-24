@@ -103,4 +103,11 @@ function bat:draw(cam)
    self.frame.u1, self.frame.v1, self.frame.u2, self.frame.v2)
 end
 
+function bat:hurt(from, v)
+  self.health = self.health - 1
+  if self.health <= 0 then 
+    self.remove = true
+  end
+end
+
 return bat

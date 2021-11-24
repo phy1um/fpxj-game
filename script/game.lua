@@ -82,17 +82,23 @@ function game:addRoom(r)
   table.insert(self.rooms, r)
 end
 
+local ids = 0
+function getUID()
+  local r = ids
+  ids = ids + 1
+  return r
+end
+
 function game:spawn(e)
+  e.id = getUID()
   table.insert(self.elist, e)
 end
 
 function game:inputEvent(k, s) 
   if s == true then
-    print("hold " .. k)
     self.eventHeld[k] = true
     self.eventPress[k] = true
   else
-    print("release " .. k)
     self.eventHeld[k] = false
     self.eventRelease[k] = true
   end
