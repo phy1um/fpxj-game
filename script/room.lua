@@ -24,6 +24,15 @@ function room:pointInBounds(x, y)
     and x < self.boundX and y < self.boundY
 end
 
+function room:rectFree(x, y, w, h)
+  return self:pointFree(x, y) and self:pointFree(x+w, y)
+          and self:pointFree(x, y+h) and self:pointFree(x+w, y+h)
+end
+
+function room:pointFree(x, y)
+  return self:get(math.floor(x/GRID), math.floor(y/GRID)) == 0
+end
+
 function room:set(x, y, v)
   self.tiles[x + (y*GW)] = v
 end

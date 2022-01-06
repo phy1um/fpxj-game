@@ -1,4 +1,6 @@
 local D2D = require("draw2d")
+local VRAM = require("vram")
+
 local GRID = 16
 
 local res = {
@@ -65,9 +67,9 @@ end
 
 function res:loadTextures() 
   self.char = D2D.loadTexture("host:characters.tga", 256, 64)
-  D2D.vramAllocTexture(self.char)
+  VRAM.mem:texture(self.char)
   self.tile = D2D.loadTexture("host:tiles.tga", 256, 64)
-  D2D.vramAllocTexture(self.tile)
+  VRAM.mem:texture(self.tile)
 end
 
 return res

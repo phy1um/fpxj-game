@@ -129,8 +129,15 @@ function player:update(dt, st)
     st:spawn(proj)
   end
 
-  self.x = self.x + self.vx*dt
-  self.y = self.y + self.vy*dt
+  local nx = self.x + self.vx*dt
+  local ny = self.y + self.vy*dt
+  if st.activeRoom:rectFree(nx, ny, self.w, self.h) then
+    self.x = nx
+    self.y = ny
+  else
+    self.vx = 0
+    self.vy = 0
+  end
 end
 
 function player:draw(cam)

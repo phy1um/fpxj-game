@@ -120,6 +120,24 @@ function draw:uploadTexture()
   return
 end
 
+local fakeVramSlice = {
+  start = 0,
+  head = 0,
+  tail = 0,
+}
+
+function fakeVramSlice.framebuffer() end
+function fakeVramSlice.texture(x) return x end
+function fakeVramSlice.alloc() end
+
+FAKE_VRAM = {mem = fakeVramSlice}
+function FAKE_VRAM.slice() 
+  return setmetatable({}, {__index = fakeVramSlice})
+end
+
+function FAKE_VRAM.size()
+  return 0
+end
 
 return draw
 

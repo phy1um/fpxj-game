@@ -21,11 +21,6 @@ function math.random(from, to)
   end
 end
 
-FAKE_VRAM = {
-  buffer = function(x, y, w, h)
-    return {}
-  end
-}
 
 print("go go go")
 if love ~= nil then
@@ -109,10 +104,10 @@ function startGame()
   g:addRoom(r1)
   g:addRoom(r2)
   g.activeRoom = r1
-  for i=1,20,1 do
-    for j=1,20,1 do
+  for i=1,4,1 do
+    for j=1,3,1 do
       local vv = math.floor(rnd()*24) + 1
-      r1:set(i, j, vv)
+      r1:set(i+10, j+6, vv)
     end
   end
   g:spawn(entity:instance("player", {x = 100, y = 100}))
@@ -124,14 +119,14 @@ function PS2PROG.start()
   math.randomseed(123)
   DMA.init(DMA.GIF)
   GS.setOutput(640, 448, GS.NONINTERLACED, GS.NTSC)
-  local fb1 = VRAM.buffer(640, 448, GS.PSM24, 256)
-  local fb2 = VRAM.buffer(640, 448, GS.PSM24, 256)
-  local zb = VRAM.buffer(640, 448, GS.PSMZ24, 256)
+  local fb1 = VRAM.mem:framebuffer(640, 448, GS.PSM24, 256)
+  local fb2 = VRAM.mem:framebuffer(640, 448, GS.PSM24, 256)
+  local zb = VRAM.mem:framebuffer(640, 448, GS.PSMZ24, 256)
   GS.setBuffers(fb1, fb2, zb)
   D2D:screenDimensions(640, 448)
   D2D:clearColour(0x2b, 0x2b, 0x2b)
   T.font = D2D.loadTexture("host:bigfont.tga", 256, 64)
-  D2D.vramAllocTexture(T.font)
+  VRAM.mem:texture(T.font)
   resources:loadTextures()
   for _, b in ipairs(buttons) do
     buttonState[b] = false  
