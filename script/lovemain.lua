@@ -2,6 +2,7 @@
 local D2D = require("draw2d")
 
 PS2PROG = {}
+function PS2PROG.logLevel(i) return end
 
 -- dummy GS implementation
 GS = {

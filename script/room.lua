@@ -50,6 +50,10 @@ function constructor(x, y)
 end
 
 function drawTiles(r)
+  if not R.tile.resident then 
+    D2D:uploadTexture(R.tile) 
+    R.tile.resident = true
+  end
   for i=0,GW,1 do
     for j=0,GH,1 do
       local tt = r:get(i,j)

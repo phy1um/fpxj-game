@@ -73,6 +73,7 @@ function draw.loadTexture(fname, w, h)
     data = love.graphics.newImage(nn),
     format = GS.PSM32
   }
+  print("loaded " .. fname)
   return tt
 end
 
@@ -106,6 +107,18 @@ function draw.frameStart()
 end
 
 function draw.frameEnd() end
+
+function draw:screenDimensions(w, h)
+  love.window.updateMode(w, h)
+end
+
+function draw:vramAllocTexture()
+  return {}
+end
+
+function draw:uploadTexture()
+  return
+end
 
 
 return draw

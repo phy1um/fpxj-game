@@ -134,8 +134,12 @@ function player:update(dt, st)
 end
 
 function player:draw(cam)
+  if not R.char.resident then 
+    D2D:uploadTexture(R.char) 
+    R.char.resident = true
+  end
   D2D:setColour(0x80, 0x80, 0x90, 0x80)
-  -- D2D:rect(self.x - cam.x, self.y - cam.y, self.w, self.h)
+  --D2D:rect(self.x - cam.x, self.y - cam.y, self.w, self.h)
   D2D:sprite(R.char, self.x - cam.x, self.y - cam.y,
     self.w, self.h, self.frame.u1, self.frame.v1, self.frame.u2,
     self.frame.v2)

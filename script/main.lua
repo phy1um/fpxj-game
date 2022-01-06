@@ -21,10 +21,17 @@ function math.random(from, to)
   end
 end
 
+FAKE_VRAM = {
+  buffer = function(x, y, w, h)
+    return {}
+  end
+}
+
 print("go go go")
 if love ~= nil then
   require = function(p, ...)
     if p == "draw2d" then p = "script/lovedraw"
+    elseif p == "vram" then return FAKE_VRAM
     else p = "script/" .. p
     end
     return coreRequire(p, ...)
@@ -40,6 +47,8 @@ else
     return rr
   end
 end
+
+--PS2PROG.slow2d = false
 
 local D2D = require("draw2d")
 local VRAM = require("vram")
@@ -100,8 +109,8 @@ function startGame()
   g:addRoom(r1)
   g:addRoom(r2)
   g.activeRoom = r1
-  for i=1,3,1 do
-    for j=1,3,1 do
+  for i=1,20,1 do
+    for j=1,20,1 do
       local vv = math.floor(rnd()*24) + 1
       r1:set(i, j, vv)
     end
@@ -113,15 +122,17 @@ end
 
 function PS2PROG.start()
   math.randomseed(123)
-  T.font = D2D.loadTexture("host:bigfont.tga", 256, 64)
-  resources:loadTextures()
   DMA.init(DMA.GIF)
   GS.setOutput(640, 448, GS.NONINTERLACED, GS.NTSC)
   local fb1 = VRAM.buffer(640, 448, GS.PSM24, 256)
   local fb2 = VRAM.buffer(640, 448, GS.PSM24, 256)
   local zb = VRAM.buffer(640, 448, GS.PSMZ24, 256)
   GS.setBuffers(fb1, fb2, zb)
+  D2D:screenDimensions(640, 448)
   D2D:clearColour(0x2b, 0x2b, 0x2b)
+  T.font = D2D.loadTexture("host:bigfont.tga", 256, 64)
+  D2D.vramAllocTexture(T.font)
+  resources:loadTextures()
   for _, b in ipairs(buttons) do
     buttonState[b] = false  
   end
@@ -138,6 +149,10 @@ function PS2PROG.frame()
   updatePadInputs(state)
   state:update(dt) 
   D2D:frameStart()
+  if not T.font.resident then 
+    D2D:uploadTexture(T.font) 
+    T.font.resident = true
+  end
   state:draw()
   D2D:setColour(255, 255, 255, 0x80)
   T.printLines(10, 10, "FPS: " .. (FPS or 0))

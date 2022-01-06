@@ -1,5 +1,5 @@
 
-nnoremap <LEADER>b :!echo "make docker-elf" <bar> nc localhost 8099 <CR>
+nnoremap <LEADER>b :!make docker-elf<CR>
 nnoremap <LEADER>o :Files<CR>
 nnoremap <LEADER>r :!make run<CR>
 nnoremap <LEADER>l :!make runlove<CR>

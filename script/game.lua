@@ -26,7 +26,10 @@ function game:focusCamera(f)
   error("could not find room for " .. f.x .. ", " .. f.y)
 end
 
+local lastLog = 5
 function game:update(dt)
+
+  --PS2PROG.logLevel(15)
   local cs = {}
   local dlist = {}
   local focus = nil
@@ -98,6 +101,16 @@ function game:inputEvent(k, s)
   if s == true then
     self.eventHeld[k] = true
     self.eventPress[k] = true
+    if k == PAD.CIRCLE then
+      if lastLog == 5 then
+        PS2PROG.logLevel(15)
+        lastLog = 15
+      else
+        PS2PROG.logLevel(5)
+        lastLog = 5
+      end
+  end
+
   else
     self.eventHeld[k] = false
     self.eventRelease[k] = true
