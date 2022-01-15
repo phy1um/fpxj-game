@@ -4,7 +4,7 @@ local R = require("resource")
 
 local W = 640
 local H = 448
-local GRID = 16
+local GRID = 32
 local GW = math.floor(W/GRID)
 local GH = math.floor(H/GRID)
 local gri = 0
@@ -30,7 +30,8 @@ function room:rectFree(x, y, w, h)
 end
 
 function room:pointFree(x, y)
-  return self:get(math.floor(x/GRID), math.floor(y/GRID)) == 0
+  local a = self:get(math.floor(x/GRID), math.floor(y/GRID))
+  return a == 0 or a == 12 or a == nil
 end
 
 function room:set(x, y, v)
@@ -39,6 +40,25 @@ end
 
 function room:get(x, y)
   return self.tiles[x + (y*GW)]
+end
+
+function room:outline()
+  for j = 0,GH,1 do
+    self:set(0, j, 23)
+    self:set(GW-1, j, 23)
+  end
+  for i = 0,GW,1 do
+    self:set(i, 0, 3)
+    self:set(i, GH-1, 3)
+  end
+  for i = 1,GW-1,1 do
+    self:set(i, GH-2, 12)
+  end
+  self:set(0, GH-2, 28)
+  self:set(GW-1, GH-2, 29)
+  self:set(1, 0, 3)
+  self:set(GW-1, 0, 3)
+
 end
 
 function constructor(x, y)
@@ -67,21 +87,10 @@ function drawTiles(r)
     for j=0,GH,1 do
       local tt = r:get(i,j)
       if tt > 0 then
-        local ti = math.floor(tt/5) +1
-        local ci = tt%5
-        if ci == 0 then
-          D2D:setColour(0x80,0x80,0x80,0x80)
-        elseif ci == 1 then
-          D2D:setColour(0xaa, 0x80, 0x80, 0x80)
-        elseif ci == 2 then
-          D2D:setColour(0x80, 0xc0, 0x80, 0x80)
-        elseif ci == 3 then
-          D2D:setColour(0x80, 0xa0, 0xf0, 0x80)
-        else
-          D2D:setColour(0x0e, 0x0e, 0x0e, 0x80)
-        end
-        local uvs = R.tileUVs[ti]
-        D2D:sprite(R.tile, i*GRID, j*GRID, 16, 16, 
+        local ti = tt - 1
+        D2D:setColour(0x80,0x80,0x80,0x80)
+        local uvs = R.tileUVs[tt]
+        D2D:sprite(R.tile, i*GRID, j*GRID, GRID, GRID,
           uvs.u1, uvs.v1, uvs.u2, uvs.v2)
       end
     end
@@ -93,4 +102,6 @@ return {
     return constructor(x, y)
   end,
   drawTiles = drawTiles,
+  GW = GW,
+  GH = GH,
 }

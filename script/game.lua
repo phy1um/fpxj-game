@@ -6,7 +6,7 @@ local game = {
   elist = {},
   camera = {x=0, y=0},
   activeRoom = nil,
- focusType = "player",
+  focusType = "player",
   eventHeld = {},
   eventPress = {},
   eventRelease = {},
@@ -15,7 +15,7 @@ local game = {
 function game:focusCamera(f)
   for _, r in ipairs(self.rooms) do
     if r:pointInBounds(f.x, f.y) then 
-      print("move from ", self.activeRoom.id, " to ", r.id)
+      print("move to ", r.id, r.offsetX, r.offsetY)
       self.activeRoom = r
       self.camera.x = r.offsetX
       self.camera.y = r.offsetY

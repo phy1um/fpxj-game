@@ -47,6 +47,7 @@ end
 
 local D2D = require("draw2d")
 local VRAM = require("vram")
+local V = require("vector")
 local T = require("text")
 local menu = require("menu")
 local game = require("game")
@@ -56,6 +57,7 @@ local player = require("player")
 local bat = require("bat")
 local player_bullet = require("player_bullet")
 local resources = require("resource")
+local dungeon = require("generate")
 
 local state = nil
 local buttons = {PAD.X, PAD.LEFT, PAD.RIGHT, PAD.UP, PAD.DOWN}
@@ -98,25 +100,28 @@ function startGame()
   entity:defineClass("player", player)
   entity:defineClass("bat", bat)
   entity:defineClass("player_bullet", player_bullet)
-  local r1 = room.new(0, 0)
-  local r2 = room.new(640, 0)
   local g = game.new()
-  g:addRoom(r1)
-  g:addRoom(r2)
-  g.activeRoom = r1
-  for i=1,4,1 do
-    for j=1,3,1 do
-      local vv = math.floor(rnd()*24) + 1
-      r1:set(i+10, j+6, vv)
-    end
-  end
-  g:spawn(entity:instance("player", {x = 100, y = 100}))
-  g:spawn(entity:instance("bat", {x = 400, y = 400}))
+  local d = dungeon.makeFloor({
+    w = 4, h = 4,
+    pathLength = 4, 
+    roomWidth = 640,
+    roomHeight = 448,
+  })
+  local rl = d:generate()
+  g.rooms = rl
+  local px, py = d:playerStart()
+  print("focus camera")
+  g:focusCamera(V.vec2(px, py))
+  print("focussed")
+  g:spawn(entity:instance("player", {x = px, y = py}))
   state = g
 end
 
+
+local mainmenu = menu.new()
+
 function PS2PROG.start()
-  math.randomseed(123)
+  math.randomseed(os.time())
   DMA.init(DMA.GIF)
   GS.setOutput(640, 448, GS.NONINTERLACED, GS.NTSC)
   local fb1 = VRAM.mem:framebuffer(640, 448, GS.PSM24, 256)
@@ -131,7 +136,6 @@ function PS2PROG.start()
   for _, b in ipairs(buttons) do
     buttonState[b] = false  
   end
-  local mainmenu = menu.new()
   mainmenu:addEntry("New Game", startGame)
   mainmenu:addEntry("Foo2", function() print("foo2") end)
   mainmenu:addEntry("Foo3", function() print("foo3") end)
@@ -152,5 +156,8 @@ function PS2PROG.frame()
   D2D:setColour(255, 255, 255, 0x80)
   T.printLines(10, 10, "FPS: " .. (FPS or 0))
   D2D:frameEnd()
+  if PAD.held(PAD.L1) then
+    state = mainmenu
+  end
 end
 

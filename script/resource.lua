@@ -1,7 +1,7 @@
 local D2D = require("draw2d")
 local VRAM = require("vram")
 
-local GRID = 16
+local GRID = 32
 
 local res = {
   char = nil,
@@ -59,16 +59,16 @@ res.batFrames = {
 
 res.tileUVs = {}
 
-for j=0,15,1 do
-  for i=0,2,1 do
-    table.insert(res.tileUVs, res.toUV(j*GRID, i*GRID, 16, 16, 256, 64))
+for j=0,8,1 do
+  for i=0,8,1 do
+    table.insert(res.tileUVs, res.toUV(i*GRID, j*GRID, 32, 32, 256, 256))
   end
 end
 
 function res:loadTextures() 
   self.char = D2D.loadTexture("host:characters.tga", 256, 64)
   VRAM.mem:texture(self.char)
-  self.tile = D2D.loadTexture("host:tiles.tga", 256, 64)
+  self.tile = D2D.loadTexture("host:dtiles.tga", 256, 256)
   VRAM.mem:texture(self.tile)
 end
 
